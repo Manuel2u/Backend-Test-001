@@ -25,8 +25,8 @@ Develop a backend system for a hospital that handles user signups, patient–doc
   - Doctors select a patient and submit notes.
 - **LLM Integration:**  
   - Use a live LLM (e.g., Google Gemini Flash or equivalent) to extract actionable steps:
-    - **Checklist:** Immediate tasks.
-    - **Plan:** A schedule of actions (e.g., daily reminders for 7 days).
+    - **Checklist:** Immediate one-time tasks (eg. buy a drug).
+    - **Plan:** A schedule of actions (e.g., daily reminders to take the drug for 7 days).
 - **Dynamic Scheduling:**  
   - Schedule reminders per the plan (reminders may be logged or stored).
   - Reminders repeat until a patient checks in, then proceed to the next one.
