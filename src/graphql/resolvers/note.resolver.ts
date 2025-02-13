@@ -23,7 +23,7 @@ const notesResolver: IResolvers = {
             isAuthenticated,
             async (root, args, context) => {
                 const response = await createDoctorNote({
-                    ...args,
+                    ...args.input,
                 });
 
                 return response;
@@ -33,7 +33,7 @@ const notesResolver: IResolvers = {
     Note: {
         note: async (parent) => {
             const encryptedNote = parent.encryptedNote
-            const patientId = parent.patientId
+            const patientId = parent.patient?.user?.id
 
             const decryptedNote = await decryptNote(encryptedNote, patientId)
 

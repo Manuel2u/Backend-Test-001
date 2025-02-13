@@ -1,4 +1,4 @@
-import { Doctor, Patient, DoctorNote, ActionableStep, sequelize } from "../models";
+import { Doctor, Patient, DoctorNote, ActionableStep, sequelize, User } from "../models";
 import { sendMessage } from "../queues/Publisher";
 import { MutationCreateNoteArgs } from "../types/generated";
 import { preprocessFilter, preprocessSort, processPagination } from "../utils";
@@ -19,7 +19,7 @@ export const createDoctorNote = async (
         }
 
         console.time("encrypt_note");
-        const encryptedNote = await encryptNote(note, patientId);
+        const encryptedNote = await encryptNote(note, patient?.userId);
         console.timeEnd("encrypt_note");
 
         console.time("delete_existing_actionable_steps");
@@ -72,7 +72,22 @@ export const getDoctorNotes = async ({ filter, sort, pagination, condition }: an
                 {
                     model: Patient,
                     as: "patient",
-                    all: true
+                    include: [
+                        {
+                            model: User,
+                            as: "user",
+                        }
+                    ]
+                },
+                {
+                    model: Doctor,
+                    as: "doctor",
+                    include: [
+                        {
+                            model: User,
+                            as: "user",
+                        }
+                    ]
                 }
             ]
         });

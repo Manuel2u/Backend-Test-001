@@ -62,7 +62,6 @@ export const initDoctorNote = (sequelize: Sequelize) => {
             modelName: "DoctorNote",
             tableName: "doctor_notes",
             underscored: true,
-            paranoid: true,
         }
     );
 };

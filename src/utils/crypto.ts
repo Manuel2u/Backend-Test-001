@@ -64,8 +64,8 @@ export const generateUserKeys = (password: string) => {
 };
 
 
-export const encryptNote = async (note: string, patientId: string) => {
-    const patient = await User.findByPk(patientId, { attributes: ["publicKey"] });
+export const encryptNote = async (note: string, userId: string) => {
+    const patient = await User.findByPk(userId, { attributes: ["publicKey"] });
 
     if (!patient || !patient.publicKey) {
         throw new Error("Patient public key not found.");
