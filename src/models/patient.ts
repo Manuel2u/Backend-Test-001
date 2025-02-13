@@ -74,7 +74,6 @@ export const initPatient = (sequelize: Sequelize) => {
         {
             sequelize,
             modelName: "Patient",
-            paranoid: true,
             tableName: "patients",
             underscored: true,
         }

@@ -28,7 +28,7 @@ type Query {
 }
 
 type Mutation {
-  createNote(input: CreateNoteInput!): Note
+  createNote(input: CreateNoteInput!): Boolean
 }
 
 input CreateNoteInput {

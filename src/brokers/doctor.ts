@@ -1,5 +1,6 @@
+import { Op } from "sequelize";
 import { Doctor, DoctorPatient, Patient, sequelize, User } from "../models";
-import { MutationSelectDoctorArgs, MutationUpdateDoctorArgs, QueryGetAllAvailableDoctorsArgs, QueryGetAllAvailableDoctorsCountArgs } from "../types/generated";
+import { MutationSelectDoctorArgs, MutationUpdateDoctorArgs, QueryGetAllAvailableDoctorsArgs, QueryGetAllAvailableDoctorsCountArgs, QueryGetPatientsAssignedToDoctorArgs, QueryGetPatientsAssignedToDoctorCountArgs } from "../types/generated";
 import { preprocessFilter, preprocessSort, processPagination } from "../utils";
 import logger from "../utils/logger";
 
@@ -160,3 +161,47 @@ export const getDoctorById = async ({ id }: { id: string }) => {
         throw new Error("Failed to retrieve doctor.");
     }
 };
+
+
+export const getPatientsAssignedToDoctor = async ({ doctorId, pagination }: QueryGetPatientsAssignedToDoctorArgs) => {
+    try {
+        const { limit, offset } = processPagination(pagination);
+
+        const patients = await Patient.findAll({
+            where: {
+                id: {
+                    [Op.in]: sequelize.literal(`(
+                        SELECT patient_id FROM doctor_patient WHERE doctor_id = '${doctorId}'
+                    )`)
+                }
+            },
+            limit,
+            offset,
+            include: [
+                {
+                    model: User,
+                    as: "user",
+                }
+            ]
+        });
+
+        return patients;
+    } catch (error) {
+        console.error("Error fetching patients assigned to doctor:", error);
+        throw new Error("Failed to retrieve patients.");
+    }
+};
+
+
+export const getPatientsAssignedToDoctorCount = async ({ doctorId }: QueryGetPatientsAssignedToDoctorCountArgs) => {
+    try {
+        const patients = await DoctorPatient.count({
+            where: { doctorId },
+        });
+
+        return patients;
+    } catch (error) {
+        console.error("Error fetching patients assigned to doctor:", error);
+        throw new Error("Failed to retrieve patients.");
+    }
+}

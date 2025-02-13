@@ -1,7 +1,7 @@
 "use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("locum_users_account_meta", {
+    await queryInterface.createTable("users_account_meta", {
       id: {
         type: Sequelize.UUID,
         primaryKey: true,

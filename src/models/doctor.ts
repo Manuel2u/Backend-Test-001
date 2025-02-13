@@ -80,7 +80,6 @@ export const initDoctor = (sequelize: Sequelize) => {
         {
             sequelize,
             modelName: "Doctor",
-            paranoid: true,
             tableName: "doctors",
             underscored: true,
         }

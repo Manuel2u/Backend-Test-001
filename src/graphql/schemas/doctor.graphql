@@ -34,10 +34,12 @@ type Query {
     sort: DoctorSort
     condition: Condition
   ): [Doctor]
+  getPatientsAssignedToDoctor(doctorId: ID!, pagination: Pagination!): [Patient]
+  getPatientsAssignedToDoctorCount(doctorId: ID!): Int
   getAllAvailableDoctorsCount(filter: DoctorFilter, condition: Condition): Int
 }
 
 type Mutation {
   updateDoctor(input: UpdateDoctorInput!): Doctor
-  selectDoctor(doctorId: ID!, patientId: ID!): Doctor
+  selectDoctor(doctorId: ID!, patientId: ID!): Boolean
 }

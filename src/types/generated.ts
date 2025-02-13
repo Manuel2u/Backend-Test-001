@@ -106,26 +106,17 @@ export type LoginMeta = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createNote?: Maybe<Note>;
-  loginDoctor?: Maybe<ProfessionalAuthPayload>;
+  createNote?: Maybe<Scalars['Boolean']['output']>;
   loginUser?: Maybe<UserAuthPayload>;
-  selectDoctor?: Maybe<Doctor>;
-  signUpDoctor?: Maybe<ProfessionalAuthPayload>;
+  selectDoctor?: Maybe<Scalars['Boolean']['output']>;
   signUpUser?: Maybe<UserAuthPayload>;
   updateDoctor?: Maybe<Doctor>;
   updatePatient?: Maybe<Patient>;
-  updateUser?: Maybe<Scalars['Boolean']['output']>;
 };
 
 
 export type MutationCreateNoteArgs = {
   input: CreateNoteInput;
-};
-
-
-export type MutationLoginDoctorArgs = {
-  email: Scalars['String']['input'];
-  password: Scalars['String']['input'];
 };
 
 
@@ -141,11 +132,6 @@ export type MutationSelectDoctorArgs = {
 };
 
 
-export type MutationSignUpDoctorArgs = {
-  input: SignUpInput;
-};
-
-
 export type MutationSignUpUserArgs = {
   input: SignUpInput;
 };
@@ -158,11 +144,6 @@ export type MutationUpdateDoctorArgs = {
 
 export type MutationUpdatePatientArgs = {
   input: UpdatePatientInput;
-};
-
-
-export type MutationUpdateUserArgs = {
-  input: UpdateUserInput;
 };
 
 export type Note = {
@@ -211,6 +192,8 @@ export type Query = {
   getAllAvailableDoctorsCount?: Maybe<Scalars['Int']['output']>;
   getNotes?: Maybe<Array<Maybe<Note>>>;
   getNotesCount?: Maybe<Scalars['Int']['output']>;
+  getPatientsAssignedToDoctor?: Maybe<Array<Maybe<Patient>>>;
+  getPatientsAssignedToDoctorCount?: Maybe<Scalars['Int']['output']>;
 };
 
 
@@ -235,14 +218,23 @@ export type QueryGetNotesArgs = {
   sort?: InputMaybe<NoteSort>;
 };
 
+
+export type QueryGetPatientsAssignedToDoctorArgs = {
+  doctorId: Scalars['ID']['input'];
+  pagination: Pagination;
+};
+
+
+export type QueryGetPatientsAssignedToDoctorCountArgs = {
+  doctorId: Scalars['ID']['input'];
+};
+
 export type SignUpInput = {
-  confirmPassword: Scalars['String']['input'];
   email: Scalars['String']['input'];
   firstName: Scalars['String']['input'];
   hasAgreedToTermsAndAgreements: Scalars['Boolean']['input'];
   lastName: Scalars['String']['input'];
   password: Scalars['String']['input'];
-  phoneNumber: Scalars['Phone']['input'];
   userType: UserType;
 };
 
@@ -278,14 +270,6 @@ export type UpdatePatientInput = {
   patientId: Scalars['ID']['input'];
 };
 
-export type UpdateUserInput = {
-  avatar?: InputMaybe<Scalars['String']['input']>;
-  email?: InputMaybe<Scalars['String']['input']>;
-  firstName?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['ID']['input'];
-  lastName?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type User = {
   __typename?: 'User';
   accountMeta?: Maybe<UserAccountMeta>;
@@ -305,12 +289,6 @@ export type UserAccountMeta = {
   status?: Maybe<UserAccountStatus>;
 };
 
-export type UserAccountMetaFilter = {
-  authType?: InputMaybe<StringOperator>;
-  isEmailVerified?: InputMaybe<Scalars['Boolean']['input']>;
-  status?: InputMaybe<StringOperator>;
-};
-
 export enum UserAccountStatus {
   Active = 'ACTIVE',
   Inactive = 'INACTIVE',
@@ -323,25 +301,10 @@ export type UserAuthPayload = {
   user?: Maybe<User>;
 };
 
-export type UserSort = {
-  email?: InputMaybe<Sort>;
-  firstName?: InputMaybe<Sort>;
-  id?: InputMaybe<Sort>;
-  lastName?: InputMaybe<Sort>;
-};
-
 export enum UserType {
   Doctor = 'DOCTOR',
   Patient = 'PATIENT'
 }
-
-export type UsersFilter = {
-  accountMeta?: InputMaybe<UserAccountMetaFilter>;
-  email?: InputMaybe<StringOperator>;
-  firstName?: InputMaybe<StringOperator>;
-  id?: InputMaybe<IdOperator>;
-  lastName?: InputMaybe<StringOperator>;
-};
 
 export type VerifyCodeResult = {
   __typename?: 'verifyCodeResult';
@@ -454,15 +417,11 @@ export type ResolversTypes = {
   Token: ResolverTypeWrapper<Scalars['Token']['output']>;
   UpdateDoctorInput: UpdateDoctorInput;
   UpdatePatientInput: UpdatePatientInput;
-  UpdateUserInput: UpdateUserInput;
   User: ResolverTypeWrapper<User>;
   UserAccountMeta: ResolverTypeWrapper<UserAccountMeta>;
-  UserAccountMetaFilter: UserAccountMetaFilter;
   UserAccountStatus: UserAccountStatus;
   UserAuthPayload: ResolverTypeWrapper<UserAuthPayload>;
-  UserSort: UserSort;
   UserType: UserType;
-  UsersFilter: UsersFilter;
   verifyCodeResult: ResolverTypeWrapper<VerifyCodeResult>;
 };
 
@@ -499,13 +458,9 @@ export type ResolversParentTypes = {
   Token: Scalars['Token']['output'];
   UpdateDoctorInput: UpdateDoctorInput;
   UpdatePatientInput: UpdatePatientInput;
-  UpdateUserInput: UpdateUserInput;
   User: User;
   UserAccountMeta: UserAccountMeta;
-  UserAccountMetaFilter: UserAccountMetaFilter;
   UserAuthPayload: UserAuthPayload;
-  UserSort: UserSort;
-  UsersFilter: UsersFilter;
   verifyCodeResult: VerifyCodeResult;
 };
 
@@ -543,15 +498,12 @@ export type LoginMetaResolvers<ContextType = any, ParentType extends ResolversPa
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  createNote?: Resolver<Maybe<ResolversTypes['Note']>, ParentType, ContextType, RequireFields<MutationCreateNoteArgs, 'input'>>;
-  loginDoctor?: Resolver<Maybe<ResolversTypes['ProfessionalAuthPayload']>, ParentType, ContextType, RequireFields<MutationLoginDoctorArgs, 'email' | 'password'>>;
+  createNote?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationCreateNoteArgs, 'input'>>;
   loginUser?: Resolver<Maybe<ResolversTypes['UserAuthPayload']>, ParentType, ContextType, RequireFields<MutationLoginUserArgs, 'email' | 'password'>>;
-  selectDoctor?: Resolver<Maybe<ResolversTypes['Doctor']>, ParentType, ContextType, RequireFields<MutationSelectDoctorArgs, 'doctorId' | 'patientId'>>;
-  signUpDoctor?: Resolver<Maybe<ResolversTypes['ProfessionalAuthPayload']>, ParentType, ContextType, RequireFields<MutationSignUpDoctorArgs, 'input'>>;
+  selectDoctor?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationSelectDoctorArgs, 'doctorId' | 'patientId'>>;
   signUpUser?: Resolver<Maybe<ResolversTypes['UserAuthPayload']>, ParentType, ContextType, RequireFields<MutationSignUpUserArgs, 'input'>>;
   updateDoctor?: Resolver<Maybe<ResolversTypes['Doctor']>, ParentType, ContextType, RequireFields<MutationUpdateDoctorArgs, 'input'>>;
   updatePatient?: Resolver<Maybe<ResolversTypes['Patient']>, ParentType, ContextType, RequireFields<MutationUpdatePatientArgs, 'input'>>;
-  updateUser?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'input'>>;
 };
 
 export type NoteResolvers<ContextType = any, ParentType extends ResolversParentTypes['Note'] = ResolversParentTypes['Note']> = {
@@ -588,6 +540,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getAllAvailableDoctorsCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, Partial<QueryGetAllAvailableDoctorsCountArgs>>;
   getNotes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Note']>>>, ParentType, ContextType, Partial<QueryGetNotesArgs>>;
   getNotesCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  getPatientsAssignedToDoctor?: Resolver<Maybe<Array<Maybe<ResolversTypes['Patient']>>>, ParentType, ContextType, RequireFields<QueryGetPatientsAssignedToDoctorArgs, 'doctorId' | 'pagination'>>;
+  getPatientsAssignedToDoctorCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryGetPatientsAssignedToDoctorCountArgs, 'doctorId'>>;
 };
 
 export interface TokenScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Token'], any> {

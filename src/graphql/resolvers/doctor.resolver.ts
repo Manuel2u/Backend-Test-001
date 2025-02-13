@@ -2,7 +2,7 @@ import { combineResolvers } from "graphql-resolvers";
 import { IResolvers } from "../../type";
 import { isAuthenticated } from "../../middlewares/verification";
 import { MyContext } from "../..";
-import { getAllAvailableDoctors, getAllAvailableDoctorsCount, selectDoctor, updateDoctor } from "../../brokers/doctor";
+import { getAllAvailableDoctors, getAllAvailableDoctorsCount, getPatientsAssignedToDoctor, getPatientsAssignedToDoctorCount, selectDoctor, updateDoctor } from "../../brokers/doctor";
 const doctorResolver: IResolvers = {
     Query: {
         getAllAvailableDoctors: combineResolvers(
@@ -18,6 +18,24 @@ const doctorResolver: IResolvers = {
             isAuthenticated,
             async (root, args, context: MyContext) => {
                 const response = await getAllAvailableDoctorsCount({
+                    ...args,
+                });
+                return response
+            }
+        ),
+        getPatientsAssignedToDoctor: combineResolvers(
+            isAuthenticated,
+            async (root, args, context: MyContext) => {
+                const response = await getPatientsAssignedToDoctor({
+                    ...args,
+                });
+                return response
+            }
+        ),
+        getPatientsAssignedToDoctorCount: combineResolvers(
+            isAuthenticated,
+            async (root, args, context: MyContext) => {
+                const response = await getPatientsAssignedToDoctorCount({
                     ...args,
                 });
                 return response
