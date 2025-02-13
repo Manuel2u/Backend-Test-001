@@ -12,7 +12,7 @@ Develop a backend system for a hospital that handles user signups, patient–doc
 
 - **Authentication & Security:**  
   - Use your preferred authentication method.
-  - Store passwords securely and encrypt all doctor notes so raw notes can ONLY be seen by the patient or doctor (Hint. end-to-end encryption).
+  - Store passwords securely and encrypt all patient notes meaning raw notes can ONLY be seen by the patient or doctor (Hint. end-to-end encryption).
 
 ### 2. Patient–Doctor Assignment
 - **Doctor Selection:**  
@@ -29,8 +29,8 @@ Develop a backend system for a hospital that handles user signups, patient–doc
     - **Plan:** A schedule of actions (e.g., daily reminders to take the drug for 7 days).
 - **Dynamic Scheduling:**  
   - Schedule reminders per the plan (reminders may be logged or stored).
-  - Reminders repeat until a patient checks in, then proceed to the next one.
-  - New notes cancel any previously scheduled actionable steps.
+  - Reminders repeat until a patient checks in, then proceed to the next one. Eg. if a user has to take a drug a day for 7 days and misses one day only (doesn't check-in once), this means the reminder runs for 8 days. 
+  - New patient notes cancel any previously scheduled actionable steps.
 
 ### 4. API Endpoints
 Expose endpoints for:
