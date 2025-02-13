@@ -12,7 +12,7 @@ Develop a backend system for a hospital that handles user signups, patient–doc
 
 - **Authentication & Security:**  
   - Use your preferred authentication method.
-  - Store passwords securely and encrypt all doctor notes so raw notes cannot be retrieved.
+  - Store passwords securely and encrypt all doctor notes so raw notes can ONLY be seen by the patient or doctor (Hint. end-to-end encryption).
 
 ### 2. Patient–Doctor Assignment
 - **Doctor Selection:**  
