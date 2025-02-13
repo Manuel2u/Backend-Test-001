@@ -1,0 +1,52 @@
+type Mutation {
+  signUpUser(input: SignUpInput!): UserAuthPayload
+  loginUser(email: String!, password: String!): UserAuthPayload
+}
+
+enum UserType {
+  PATIENT
+  DOCTOR
+}
+
+type LoginMeta {
+  lastLoginAt: Date
+  lastLoginLocation: String
+  lastLoginIp: String
+}
+
+type FindUserByEmailResult {
+  status: String
+  message: String
+  user: User
+}
+
+type verifyCodeResult {
+  status: String
+  message: String
+  token: String
+}
+
+input AuthenticatedResetPasswordInput {
+  oldPassword: String!
+  confirmPassword: String!
+  password: String!
+}
+
+input SignUpInput {
+  email: String!
+  firstName: String!
+  lastName: String!
+  password: String!
+  hasAgreedToTermsAndAgreements: Boolean!
+  userType: UserType!
+}
+
+type ProfessionalAuthPayload {
+  token: String
+  user: User
+}
+
+type UserAuthPayload {
+  token: String
+  user: User
+}

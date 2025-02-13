@@ -1,0 +1,38 @@
+type Note {
+  id: ID!
+  doctor: Doctor
+  patient: Patient
+  note: String
+  createdAt: Date
+  updatedAt: Date
+}
+
+input NoteFilter {
+  doctorId: IdOperator
+  patientId: IdOperator
+}
+
+input NoteSort {
+  createdAt: Sort
+  updatedAt: Sort
+}
+
+type Query {
+  getNotes(
+    filter: NoteFilter
+    pagination: Pagination
+    sort: NoteSort
+    condition: Condition
+  ): [Note]
+  getNotesCount: Int
+}
+
+type Mutation {
+  createNote(input: CreateNoteInput!): Note
+}
+
+input CreateNoteInput {
+  doctorId: ID!
+  patientId: ID!
+  note: String!
+}

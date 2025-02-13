@@ -1,0 +1,63 @@
+scalar Date
+scalar Email
+scalar Token
+scalar Phone
+
+input Pagination {
+  skip: Int
+  limit: Int
+}
+input IdOperator {
+  eq: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringOperator {
+  eq: String
+  # notEq: String
+  contains: [String]
+  # notContains: String
+  in: [String!]
+  like: String
+  iLike: String
+  notLike: String
+  notIn: [String!]
+  regex: String
+  iRegex: String
+}
+
+input BooleanOperator {
+  eq: String
+}
+
+input IntOperator {
+  eq: Int
+  gt: Int
+  gte: Int
+  lt: Int
+  lte: Int
+  in: [Int!]
+  notIn: [Int!]
+}
+
+input DateOperator {
+  eq: Date
+  gt: Date
+  gte: Date
+  lt: Date
+  lte: Date
+  in: [Date!]
+  notIn: [Date!]
+  between: [Date]
+}
+
+enum Sort {
+  ASC
+  DESC
+}
+
+enum Condition {
+  and
+  or
+}

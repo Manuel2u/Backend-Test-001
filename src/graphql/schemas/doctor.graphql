@@ -1,0 +1,43 @@
+type Doctor {
+  id: ID!
+  user: User!
+  available: Boolean
+  specialization: String
+  bio: String
+  createdAt: Date
+  updatedAt: Date
+}
+
+input DoctorFilter {
+  id: IdOperator
+  specialization: StringOperator
+  available: BooleanOperator
+}
+
+input DoctorSort {
+  createdAt: Sort
+  updatedAt: Sort
+}
+
+input UpdateDoctorInput {
+  doctorId: ID!
+  licenseNumber: String
+  available: Boolean
+  specialization: String
+  bio: String
+}
+
+type Query {
+  getAllAvailableDoctors(
+    filter: DoctorFilter
+    pagination: Pagination
+    sort: DoctorSort
+    condition: Condition
+  ): [Doctor]
+  getAllAvailableDoctorsCount(filter: DoctorFilter, condition: Condition): Int
+}
+
+type Mutation {
+  updateDoctor(input: UpdateDoctorInput!): Doctor
+  selectDoctor(doctorId: ID!, patientId: ID!): Doctor
+}

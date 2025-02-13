@@ -1,0 +1,22 @@
+type User {
+  id: ID
+  fullName: String
+  email: String
+  avatar: String
+  accountMeta: UserAccountMeta
+  loginMeta: LoginMeta
+  createdAt: Date
+  updatedAt: Date
+}
+
+enum UserAccountStatus {
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+}
+
+type UserAccountMeta {
+  status: UserAccountStatus
+  authType: String
+  isEmailVerified: Boolean
+}

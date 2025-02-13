@@ -1,0 +1,18 @@
+type Patient {
+  id: ID!
+  user: User!
+  dateOfBirth: String
+  bloodType: String
+  emergencyContact: String
+}
+
+input UpdatePatientInput {
+  patientId: ID!
+  dateOfBirth: Date
+  bloodType: String
+  emergencyContact: String
+}
+
+type Mutation {
+  updatePatient(input: UpdatePatientInput!): Patient
+}
