@@ -46,7 +46,7 @@ Provide documentation justifying your design decisions (e.g., authentication, en
 ## Technical Constraints
 - Use any backend stack you prefer (Node.js is recommended).
 - This is a backend-only project.
-- External resources are allowed.
+- External resources are allowed. AI, Stack Overflow, etc.
 
 ## Submission
 - Host your project on GitHub.
