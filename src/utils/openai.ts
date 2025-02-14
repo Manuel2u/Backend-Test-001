@@ -15,29 +15,21 @@ const openai = new OpenAI({
  */
 export const processLLM = async (doctorNoteId: string): Promise<any> => {
     try {
-        console.time("fetch_doctor_note");
         const doctorNote = await DoctorNote.findByPk(doctorNoteId);
-        console.timeEnd("fetch_doctor_note");
 
         if (!doctorNote) {
             throw new Error("Doctor Note not found.");
         }
 
-        console.time("fetch_patient");
         const patient = await getPatientById({ id: doctorNote?.patientId })
-        console.timeEnd("fetch_patient");
 
         if (!patient) {
             throw new Error("Patient not found.");
         }
 
-        console.time("decrypt_note");
         const decryptedNote = await decryptNote(doctorNote.encryptedNote, patient?.userId);
-        console.timeEnd("decrypt_note");
 
-        console.log("Decrypted Note:", decryptedNote);
 
-        console.time("llm_request");
         const response = await openai.chat.completions.create({
             model: "gpt-4o",
             messages: [
@@ -67,8 +59,6 @@ export const processLLM = async (doctorNoteId: string): Promise<any> => {
             max_tokens: 1000,
             response_format: { type: "json_object" }
         });
-        console.timeEnd("llm_request");
-        console.log(JSON.stringify(response, null, 2));
 
         const output = response.choices[0].message.content;
         const parsedOutput = JSON.parse(output);

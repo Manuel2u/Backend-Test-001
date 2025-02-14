@@ -25,7 +25,6 @@ export const remindUserConsumer = async (job: Job
         throw new Error("Reminder not found.");
       }
 
-      // Check if the reminder was acknowledged
       if (!reminder.acknowledged) {
         await reminder.update({ missedCount: reminder.missedCount + 1 });
 
@@ -33,7 +32,6 @@ export const remindUserConsumer = async (job: Job
 
         logger.info(`Patient ${data.patientId} missed reminder! Extending schedule.`);
 
-        // Reschedule the reminder if it's missed
         const nextReminderAt = new Date(Date.now() + data.every);
 
         await sendReminderQueue.add(
@@ -55,7 +53,6 @@ export const remindUserConsumer = async (job: Job
 export const processActionableStepsExtraction = async (job: Job, token: string): Promise<void> => {
   if (job) {
     try {
-      // console.log('Received', msg.content.toString());
       const data = JSON.parse(job.data);
       console.log('Received Process Actionable step extractions', job?.data);
 
@@ -70,13 +67,10 @@ export const processActionableStepsExtraction = async (job: Job, token: string):
           throw new Error("Patient not found.");
         }
 
-        console.time("process_llm");
         const extractedSteps = await processLLM(data.doctorNoteId);
-        console.timeEnd("process_llm");
 
         job.updateProgress(50)
 
-        console.time("create_new_actionable_steps");
         job.updateProgress(70)
 
         await sequelize.transaction(async (transaction) => {
@@ -100,12 +94,6 @@ export const processActionableStepsExtraction = async (job: Job, token: string):
           for (const plan of extractedSteps.plan) {
             const parsedSchedule = parseSchedule(plan);
 
-            console.log(plan, "plan--->>");
-
-
-            console.log('Parsed Schedule', parsedSchedule);
-
-
             if (parsedSchedule) {
               const step = await ActionableStep.create(
                 {
@@ -128,7 +116,7 @@ export const processActionableStepsExtraction = async (job: Job, token: string):
                 { transaction }
               );
 
-              console.log(`🔁 Scheduling Repeatable Reminder: ${plan.task} ${parsedSchedule.cron ? `via cron (${parsedSchedule.cron})` : `every ${parsedSchedule.ms}ms`}`);
+              console.log(`Scheduling Repeatable Reminder: ${plan.task} ${parsedSchedule.cron ? `via cron (${parsedSchedule.cron})` : `every ${parsedSchedule.ms}ms`}`);
 
               sendMessage(
                 "backendtest_send_reminder",
@@ -144,8 +132,7 @@ export const processActionableStepsExtraction = async (job: Job, token: string):
             }
           }
         });
-        console.timeEnd("create_new_actionable_steps");
-        console.log(`✅ LLM processing & reminders scheduled for Patient ${data.patientId}`);
+        console.log(`LLM processing & reminders scheduled for Patient ${data.patientId}`);
       }
       job.updateProgress(100)
       return job?.data;

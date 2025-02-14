@@ -17,9 +17,7 @@ export const signUpUser = async (
     console.time("signup");
     let user: User | null = null;
     try {
-        console.time("find_existing_user");
         const alreadyExistingUser = await User.findOne({ where: { email } });
-        console.timeEnd("find_existing_user");
 
         if (!hasAgreedToTermsAndAgreements) {
             throw new Error("You must agree to terms and conditions.");
@@ -29,13 +27,10 @@ export const signUpUser = async (
             throw new Error("User with this email already exists.");
         }
 
-        console.time("hash_password");
         const hashedPassword = await hash(password, await genSalt(10));
-        console.timeEnd("hash_password");
 
         const { encryptedPrivateKey, publicKey } = generateUserKeys(password)
 
-        console.time("create_user");
         await sequelize.transaction(async (transaction) => {
             user = await User.create({
                 firstName,
@@ -80,8 +75,6 @@ export const signUpUser = async (
             ]);
         });
 
-        console.timeEnd("create_user");
-        console.timeEnd("signup");
 
         return {
             user,
@@ -145,5 +138,16 @@ export const loginUsers = async ({ email, password }: MutationLoginUserArgs, { r
     } catch (e) {
         logger.error(`ERROR SIGNING IN: ${e}`)
         throw e
+    }
+}
+
+
+export const logoutUser = async ({ userId }: { userId: string }, { req }: MyContext) => {
+    try {
+        await client.del(`user:privateKey:${userId}`);
+        return true;
+    } catch (e) {
+        logger.error(`ERROR LOGGING OUT: ${e}`);
+        throw e;
     }
 }

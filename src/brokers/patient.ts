@@ -7,15 +7,12 @@ export const updatePatient = async (
   console.time("update_patient");
 
   try {
-    console.time("find_patient");
     const patient = await Patient.findByPk(patientId, { include: [{ model: User, as: "user" }] });
-    console.timeEnd("find_patient");
 
     if (!patient) {
       throw new Error("Patient not found.");
     }
 
-    console.time("update_patient_data");
     await patient.update(
       {
         dateOfBirth: dateOfBirth ?? patient.dateOfBirth,
@@ -25,9 +22,7 @@ export const updatePatient = async (
     );
 
     await patient.save();
-    console.timeEnd("update_patient_data");
 
-    console.timeEnd("update_patient");
     return true
   } catch (e) {
     logger.error(`ERROR UPDATING PATIENT: ${e}`);

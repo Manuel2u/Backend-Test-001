@@ -46,6 +46,5 @@ const config =
         ? test
         : undefined;
 
-console.log("CONFIG", config);
 
 export default config;

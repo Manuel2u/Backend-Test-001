@@ -7,26 +7,18 @@ import logger from "../utils/logger";
 
 export const createDoctorNote = async (
     { doctorId, patientId, note }: MutationCreateNoteArgs["input"]) => {
-    console.time("create_doctor_note");
     try {
-        console.time("validate_doctor_patient");
         const doctor = await Doctor.findByPk(doctorId);
         const patient = await Patient.findByPk(patientId);
-        console.timeEnd("validate_doctor_patient");
 
         if (!doctor || !patient) {
             throw new Error("Doctor or patient not found.");
         }
 
-        console.time("encrypt_note");
         const encryptedNote = await encryptNote(note, patient?.userId);
-        console.timeEnd("encrypt_note");
 
-        console.time("delete_existing_actionable_steps");
         await ActionableStep.destroy({ where: { doctorNoteId: patientId } });
-        console.timeEnd("delete_existing_actionable_steps");
 
-        console.time("create_new_note");
         let newNote: DoctorNote;
         await sequelize.transaction(async (transaction) => {
             newNote = await DoctorNote.create(
@@ -34,7 +26,6 @@ export const createDoctorNote = async (
                 { transaction }
             );
         });
-        console.timeEnd("create_new_note");
 
         sendMessage(
             "backendtest_process_llm",
