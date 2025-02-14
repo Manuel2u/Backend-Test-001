@@ -20,6 +20,18 @@ export type Scalars = {
   Token: { input: any; output: any; }
 };
 
+export type ActionableStep = {
+  __typename?: 'ActionableStep';
+  completed: Scalars['Boolean']['output'];
+  createdAt: Scalars['String']['output'];
+  description: Scalars['String']['output'];
+  doctorNoteId: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
+  scheduledAt?: Maybe<Scalars['String']['output']>;
+  type: Scalars['String']['output'];
+  updatedAt: Scalars['String']['output'];
+};
+
 export type AuthenticatedResetPasswordInput = {
   confirmPassword: Scalars['String']['input'];
   oldPassword: Scalars['String']['input'];
@@ -106,12 +118,18 @@ export type LoginMeta = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  checkInReminder: Scalars['Boolean']['output'];
   createNote?: Maybe<Scalars['Boolean']['output']>;
   loginUser?: Maybe<UserAuthPayload>;
   selectDoctor?: Maybe<Scalars['Boolean']['output']>;
   signUpUser?: Maybe<UserAuthPayload>;
   updateDoctor?: Maybe<Doctor>;
   updatePatient?: Maybe<Patient>;
+};
+
+
+export type MutationCheckInReminderArgs = {
+  reminderId: Scalars['ID']['input'];
 };
 
 
@@ -188,12 +206,20 @@ export type ProfessionalAuthPayload = {
 
 export type Query = {
   __typename?: 'Query';
+  getAllActionableSteps: Array<ActionableStep>;
   getAllAvailableDoctors?: Maybe<Array<Maybe<Doctor>>>;
   getAllAvailableDoctorsCount?: Maybe<Scalars['Int']['output']>;
+  getAllReminders: Array<Reminder>;
   getNotes?: Maybe<Array<Maybe<Note>>>;
   getNotesCount?: Maybe<Scalars['Int']['output']>;
   getPatientsAssignedToDoctor?: Maybe<Array<Maybe<Patient>>>;
   getPatientsAssignedToDoctorCount?: Maybe<Scalars['Int']['output']>;
+};
+
+
+export type QueryGetAllActionableStepsArgs = {
+  doctorNoteId: Scalars['ID']['input'];
+  pagination: Pagination;
 };
 
 
@@ -208,6 +234,12 @@ export type QueryGetAllAvailableDoctorsArgs = {
 export type QueryGetAllAvailableDoctorsCountArgs = {
   condition?: InputMaybe<Condition>;
   filter?: InputMaybe<DoctorFilter>;
+};
+
+
+export type QueryGetAllRemindersArgs = {
+  pagination: Pagination;
+  patientId: Scalars['ID']['input'];
 };
 
 
@@ -227,6 +259,17 @@ export type QueryGetPatientsAssignedToDoctorArgs = {
 
 export type QueryGetPatientsAssignedToDoctorCountArgs = {
   doctorId: Scalars['ID']['input'];
+};
+
+export type Reminder = {
+  __typename?: 'Reminder';
+  acknowledged: Scalars['Boolean']['output'];
+  actionableStep: ActionableStep;
+  createdAt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  patientId: Scalars['ID']['output'];
+  reminderAt: Scalars['String']['output'];
+  updatedAt: Scalars['String']['output'];
 };
 
 export type SignUpInput = {
@@ -384,6 +427,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  ActionableStep: ResolverTypeWrapper<ActionableStep>;
   AuthenticatedResetPasswordInput: AuthenticatedResetPasswordInput;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   BooleanOperator: BooleanOperator;
@@ -410,6 +454,7 @@ export type ResolversTypes = {
   Phone: ResolverTypeWrapper<Scalars['Phone']['output']>;
   ProfessionalAuthPayload: ResolverTypeWrapper<ProfessionalAuthPayload>;
   Query: ResolverTypeWrapper<{}>;
+  Reminder: ResolverTypeWrapper<Reminder>;
   SignUpInput: SignUpInput;
   Sort: Sort;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
@@ -427,6 +472,7 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  ActionableStep: ActionableStep;
   AuthenticatedResetPasswordInput: AuthenticatedResetPasswordInput;
   Boolean: Scalars['Boolean']['output'];
   BooleanOperator: BooleanOperator;
@@ -452,6 +498,7 @@ export type ResolversParentTypes = {
   Phone: Scalars['Phone']['output'];
   ProfessionalAuthPayload: ProfessionalAuthPayload;
   Query: {};
+  Reminder: Reminder;
   SignUpInput: SignUpInput;
   String: Scalars['String']['output'];
   StringOperator: StringOperator;
@@ -462,6 +509,18 @@ export type ResolversParentTypes = {
   UserAccountMeta: UserAccountMeta;
   UserAuthPayload: UserAuthPayload;
   verifyCodeResult: VerifyCodeResult;
+};
+
+export type ActionableStepResolvers<ContextType = any, ParentType extends ResolversParentTypes['ActionableStep'] = ResolversParentTypes['ActionableStep']> = {
+  completed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  doctorNoteId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  scheduledAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
@@ -498,6 +557,7 @@ export type LoginMetaResolvers<ContextType = any, ParentType extends ResolversPa
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  checkInReminder?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationCheckInReminderArgs, 'reminderId'>>;
   createNote?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationCreateNoteArgs, 'input'>>;
   loginUser?: Resolver<Maybe<ResolversTypes['UserAuthPayload']>, ParentType, ContextType, RequireFields<MutationLoginUserArgs, 'email' | 'password'>>;
   selectDoctor?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationSelectDoctorArgs, 'doctorId' | 'patientId'>>;
@@ -536,12 +596,25 @@ export type ProfessionalAuthPayloadResolvers<ContextType = any, ParentType exten
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  getAllActionableSteps?: Resolver<Array<ResolversTypes['ActionableStep']>, ParentType, ContextType, RequireFields<QueryGetAllActionableStepsArgs, 'doctorNoteId' | 'pagination'>>;
   getAllAvailableDoctors?: Resolver<Maybe<Array<Maybe<ResolversTypes['Doctor']>>>, ParentType, ContextType, Partial<QueryGetAllAvailableDoctorsArgs>>;
   getAllAvailableDoctorsCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, Partial<QueryGetAllAvailableDoctorsCountArgs>>;
+  getAllReminders?: Resolver<Array<ResolversTypes['Reminder']>, ParentType, ContextType, RequireFields<QueryGetAllRemindersArgs, 'pagination' | 'patientId'>>;
   getNotes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Note']>>>, ParentType, ContextType, Partial<QueryGetNotesArgs>>;
   getNotesCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   getPatientsAssignedToDoctor?: Resolver<Maybe<Array<Maybe<ResolversTypes['Patient']>>>, ParentType, ContextType, RequireFields<QueryGetPatientsAssignedToDoctorArgs, 'doctorId' | 'pagination'>>;
   getPatientsAssignedToDoctorCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryGetPatientsAssignedToDoctorCountArgs, 'doctorId'>>;
+};
+
+export type ReminderResolvers<ContextType = any, ParentType extends ResolversParentTypes['Reminder'] = ResolversParentTypes['Reminder']> = {
+  acknowledged?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  actionableStep?: Resolver<ResolversTypes['ActionableStep'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  patientId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  reminderAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export interface TokenScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Token'], any> {
@@ -581,6 +654,7 @@ export type VerifyCodeResultResolvers<ContextType = any, ParentType extends Reso
 };
 
 export type Resolvers<ContextType = any> = {
+  ActionableStep?: ActionableStepResolvers<ContextType>;
   Date?: GraphQLScalarType;
   Doctor?: DoctorResolvers<ContextType>;
   Email?: GraphQLScalarType;
@@ -592,6 +666,7 @@ export type Resolvers<ContextType = any> = {
   Phone?: GraphQLScalarType;
   ProfessionalAuthPayload?: ProfessionalAuthPayloadResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Reminder?: ReminderResolvers<ContextType>;
   Token?: GraphQLScalarType;
   User?: UserResolvers<ContextType>;
   UserAccountMeta?: UserAccountMetaResolvers<ContextType>;

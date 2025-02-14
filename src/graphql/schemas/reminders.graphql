@@ -1,0 +1,32 @@
+type ActionableStep {
+  id: ID!
+  doctorNoteId: ID!
+  type: String!
+  description: String!
+  scheduledAt: Date
+  completed: Boolean!
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type Reminder {
+  id: ID!
+  actionableStep: ActionableStep!
+  patientId: ID!
+  reminderAt: Date!
+  acknowledged: Boolean!
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type Query {
+  getAllActionableSteps(
+    doctorNoteId: ID!
+    pagination: Pagination!
+  ): [ActionableStep!]!
+  getAllReminders(patientId: ID!, pagination: Pagination!): [Reminder!]!
+}
+
+type Mutation {
+  checkInReminder(reminderId: ID!): Boolean!
+}

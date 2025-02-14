@@ -43,8 +43,8 @@ export const initializeQueues = async () => {
     },
     {
       name: "backendtest_process_llm",
-      queue: sendReminderQueue,
-      worker: sendReminderQueueWorker,
+      queue: processLLMQueue,
+      worker: processLLMQueueWorker,
       description: "Listening to send reminders",
     }
   ];

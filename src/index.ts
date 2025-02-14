@@ -1,21 +1,21 @@
-import express, { NextFunction, Request, Response } from "express";
+import express, { Request } from "express";
 import { json } from "body-parser";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { createServer } from "http";
-import { useServer } from "graphql-ws/lib/use/ws";
 import { initDb, sequelize } from "./models";
 import schema from "./graphql/schemas";
 import cors from "cors";
 import customError from "./middlewares/custom-error";
 import config from "./config";
-import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { __disolveContext } from "./middlewares/context";
 import { initializeApp } from "firebase/app";
 import { ExpressAdapter } from "@bull-board/express"
 import { createBullBoard } from "@bull-board/api"
 const { BullMQAdapter } = require('@bull-board/api/bullMQAdapter');
-import { initializeQueues, sendReminderQueue } from "./queues/queues";
+import { initializeQueues, processLLMQueue, sendReminderQueue } from "./queues/queues";
+import { pubsub } from "./redis";
+import logger from "./utils/logger";
 
 
 
@@ -46,7 +46,7 @@ export const start = async () => {
     serverAdapter.setBasePath('/admin/queues');
 
     createBullBoard({
-      queues: [new BullMQAdapter(sendReminderQueue)],
+      queues: [new BullMQAdapter(sendReminderQueue), new BullMQAdapter(processLLMQueue)],
       serverAdapter: serverAdapter,
     });
 
@@ -116,6 +116,38 @@ export const start = async () => {
 
     httpServer.listen(config?.app.port, () => {
       console.log(`🚀 server is running on ${config?.app.port}`);
+    });
+
+    const shutdown = async () => {
+      console.log("🔻 Graceful shutdown initiated...");
+
+      try {
+        // Stop GraphQL Server
+        console.log("🛑 Draining GraphQL Server...");
+        await graph.stop();
+
+        // Disconnect Redis
+        console.log("🛑 Disconnecting Redis...");
+        await pubsub.close();
+
+        // Disconnect MongoDB
+        console.log("🛑 Closing MongoDB connection...");
+        await sequelize.close();
+
+        console.log("✅ Cleanup complete. Exiting now.");
+        process.exit(0);
+      } catch (error) {
+        console.error("❌ Error during shutdown:", error);
+        process.exit(1);
+      }
+    };
+
+    process.on("SIGINT", shutdown);
+    process.on("SIGTERM", shutdown);
+    process.on("uncaughtException", (err) => {
+      console.error("🔥 Uncaught Exception:", err);
+      logger.error(`🔥 Uncaught Exception: ${err}`);
+      shutdown();
     });
   } catch (e) {
     throw e;

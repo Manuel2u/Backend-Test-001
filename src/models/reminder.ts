@@ -9,6 +9,7 @@ class Reminder extends Model<
     declare patientId: string;
     declare reminderAt: Date;
     declare acknowledged: boolean;
+    declare missedCount: number;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
 
@@ -50,6 +51,11 @@ export const initReminder = (sequelize: Sequelize) => {
             acknowledged: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: false,
+            },
+            missedCount: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                defaultValue: 0,
             },
             createdAt: {
                 type: DataTypes.DATE,

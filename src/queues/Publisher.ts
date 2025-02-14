@@ -12,8 +12,20 @@ const sendToQueue = async (data: any) => {
       return;
     }
 
+    const delay = JSON.parse(data?.value)?.delay || 0;
+
+    const pattern = JSON.parse(data?.value)?.pattern || null;
+
+    const every = JSON.parse(data?.value)?.every || null;
+
+    const repeatOptions = pattern ? { pattern } : every ? { every } : undefined;
+
+    console.log(repeatOptions, "repeatOptions");
+
     await queue.add(data?.channel, data.value, {
       attempts: 3,
+      delay,
+      repeat: repeatOptions,
     });
 
     console.log(

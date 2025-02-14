@@ -1,7 +1,7 @@
 import { Op, OrderItem } from "sequelize";
 import _ from "lodash";
 import { Pagination } from "../types/generated";
-
+import ms from "ms";
 
 
 const filterDictionary = {
@@ -128,19 +128,19 @@ const handleCaps = (entry: [string, "ASC" | "DESC"]) => {
 
 
 
-export const parseScheduleToMs = (schedule: string): number => {
-  const matches = schedule.match(/(\d+)\s*(minutes?|hours?|days?|weeks?)/i);
-  if (!matches) return 0;
+/**
+ * Parses a schedule string into either:
+ * - **Milliseconds** (for intervals)
+ * - **Cron string** (for time-based schedules)
+ */
+export const parseSchedule = (schedule: { schedule: string; type: "interval" | "cron" }) => {
+  if (schedule.type === "cron") {
+    return { cron: schedule.schedule };
+  }
 
-  const value = parseInt(matches[1], 10);
-  const unit = matches[2].toLowerCase();
+  if (schedule.type === "interval") {
+    return { ms: ms(schedule?.schedule as any) };
+  }
 
-  const timeUnits: Record<string, number> = {
-    minute: 60 * 1000,
-    hour: 60 * 60 * 1000,
-    day: 24 * 60 * 60 * 1000,
-    week: 7 * 24 * 60 * 60 * 1000,
-  };
-
-  return value * (timeUnits[unit] || 0);
+  return null;
 };
