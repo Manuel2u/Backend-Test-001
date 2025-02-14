@@ -16,6 +16,7 @@ const { BullMQAdapter } = require('@bull-board/api/bullMQAdapter');
 import { initializeQueues, processLLMQueue, sendReminderQueue } from "./queues/queues";
 import { pubsub } from "./redis";
 import logger from "./utils/logger";
+import { limiter } from "./middlewares/rate-limiter";
 
 
 
@@ -99,6 +100,8 @@ export const start = async () => {
     app.use("/health", (req, res) => {
       res.status(200).send("All is green!!!");
     });
+
+    app.use(limiter);
 
 
     app.use(
