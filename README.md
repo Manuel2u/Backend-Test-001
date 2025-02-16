@@ -21,7 +21,6 @@ I chose GraphQL as the primary API architecture instead of REST due to its flexi
 ### Authentication
 
 - **JWT-based Authentication:** Ensures secure API access.
-- **User Roles:** Doctors and Patients have distinct roles and permissions.
 - **Rate Limiting:** Prevents brute-force attacks and API abuse.
 
 ### Data Encryption Strategy
